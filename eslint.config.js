@@ -30,7 +30,6 @@ export default tseslint.config(
         { prefer: "type-imports", fixStyle: "inline-type-imports" },
       ],
       "@typescript-eslint/no-import-type-side-effects": "error",
-      "no-console": "warn",
     },
   },
   eslintConfigPrettier,
