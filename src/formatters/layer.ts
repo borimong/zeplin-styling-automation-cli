@@ -58,20 +58,27 @@ function formatBorder(border: LayerBorder): string {
   return `${position} ${String(thickness)}px ${fillStr}`;
 }
 
-function formatShadow(shadow: LayerShadow): string {
-  const type = shadow.type ?? "outer";
+function formatBoxShadow(shadow: LayerShadow): string {
+  const inset = shadow.type === "inner" ? "inset " : "";
   const offsetX = shadow.offsetX ?? 0;
   const offsetY = shadow.offsetY ?? 0;
   const blur = shadow.blurRadius ?? 0;
   const spread = shadow.spread ?? 0;
-  const colorStr = shadow.color ? formatColor(shadow.color) : "none";
-  return `${type} (${String(offsetX)}, ${String(offsetY)}) blur=${String(blur)} spread=${String(spread)} ${colorStr}`;
+  const colorStr = shadow.color ? formatColor(shadow.color) : "transparent";
+  return `${inset}${String(offsetX)}px ${String(offsetY)}px ${String(blur)}px ${String(spread)}px ${colorStr}`;
 }
 
-function formatBlur(blur: LayerBlur): string {
-  const type = blur.type ?? "gaussian";
+function formatDropShadow(shadow: LayerShadow): string {
+  const offsetX = shadow.offsetX ?? 0;
+  const offsetY = shadow.offsetY ?? 0;
+  const blur = shadow.blurRadius ?? 0;
+  const colorStr = shadow.color ? formatColor(shadow.color) : "transparent";
+  return `${String(offsetX)}px ${String(offsetY)}px ${String(blur)}px ${colorStr}`;
+}
+
+function formatBlurRadius(blur: LayerBlur): string {
   const radius = blur.radius ?? 0;
-  return `${type} radius=${String(radius)}`;
+  return `${String(radius)}px`;
 }
 
 function formatTextStyles(
@@ -113,9 +120,7 @@ function printLayerDetail(layer: Layer, prefix: string): void {
     `${indent}위치: (${String(rect.x)}, ${String(rect.y)}) 크기: ${String(rect.width)} x ${String(rect.height)}`,
   );
 
-  if (layer.opacity !== 1) {
-    console.log(`${indent}투명도: ${String(layer.opacity)}`);
-  }
+  console.log(`${indent}opacity: ${String(layer.opacity)}`);
   if (layer.blendMode) {
     console.log(`${indent}블렌드 모드: ${layer.blendMode}`);
   }
@@ -135,11 +140,19 @@ function printLayerDetail(layer: Layer, prefix: string): void {
   });
 
   layer.shadows?.forEach((shadow) => {
-    console.log(`${indent}그림자: ${formatShadow(shadow)}`);
+    console.log(`${indent}box-shadow: ${formatBoxShadow(shadow)}`);
+    if (shadow.type !== "inner") {
+      console.log(`${indent}drop-shadow: ${formatDropShadow(shadow)}`);
+    }
   });
 
   if (layer.blur) {
-    console.log(`${indent}블러: ${formatBlur(layer.blur)}`);
+    const blurType = layer.blur.type ?? "gaussian";
+    if (blurType === "background") {
+      console.log(`${indent}backdrop-blur: ${formatBlurRadius(layer.blur)}`);
+    } else {
+      console.log(`${indent}blur: ${formatBlurRadius(layer.blur)}`);
+    }
   }
 
   if (layer.type === "text" && layer.content) {
