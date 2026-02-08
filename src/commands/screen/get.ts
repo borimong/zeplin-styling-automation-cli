@@ -1,12 +1,17 @@
 import type { Screen, ScreenVersion } from "@zeplin/sdk";
-import { zeplinClient } from "../zeplin.ts";
-import { parseZeplinScreenUrl } from "../parse-url.ts";
+import type { CommandModule, ArgumentsCamelCase } from "yargs";
+import { zeplinClient } from "../../zeplin.ts";
+import { parseZeplinScreenUrl } from "../../parse-url.ts";
 import {
   formatColor,
   printAssets,
   printLayerTree,
   printLinks,
-} from "../formatters/layer.ts";
+} from "../../formatters/layer.ts";
+
+type ScreenGetArgs = {
+  url: string;
+};
 
 function formatDate(timestamp: number): string {
   return new Date(timestamp * 1000).toLocaleString("ko-KR");
@@ -59,7 +64,9 @@ function getApiErrorMessage(status: number): string {
   }
 }
 
-function isApiError(error: unknown): error is { response: { status: number } } {
+function isApiError(
+  error: unknown,
+): error is { response: { status: number } } {
   return (
     typeof error === "object" &&
     error !== null &&
@@ -72,36 +79,48 @@ function isApiError(error: unknown): error is { response: { status: number } } {
   );
 }
 
-export async function screenCommand(url: string): Promise<void> {
-  const { projectId, screenId } = parseZeplinScreenUrl(url);
+const screenGetCommand: CommandModule<object, ScreenGetArgs> = {
+  command: "get <url>",
+  describe: "Zeplin 스크린 상세 정보를 조회합니다",
+  builder: (yargs) =>
+    yargs.positional("url", {
+      type: "string",
+      describe: "Zeplin 스크린 URL",
+      demandOption: true,
+    }),
+  handler: async (args: ArgumentsCamelCase<ScreenGetArgs>) => {
+    const { projectId, screenId } = parseZeplinScreenUrl(args.url);
 
-  try {
-    const [screenResponse, versionResponse] = await Promise.all([
-      zeplinClient.screens.getScreen(projectId, screenId),
-      zeplinClient.screens.getLatestScreenVersion(projectId, screenId),
-    ]);
+    try {
+      const [screenResponse, versionResponse] = await Promise.all([
+        zeplinClient.screens.getScreen(projectId, screenId),
+        zeplinClient.screens.getLatestScreenVersion(projectId, screenId),
+      ]);
 
-    const screen: Screen = screenResponse.data;
-    const version: ScreenVersion = versionResponse.data;
+      const screen: Screen = screenResponse.data;
+      const version: ScreenVersion = versionResponse.data;
 
-    printScreenInfo(screen);
-    printVersionInfo(version);
-    printStats(screen);
+      printScreenInfo(screen);
+      printVersionInfo(version);
+      printStats(screen);
 
-    if (version.layers.length > 0) {
-      console.log("\n=== 레이어 상세 ===");
-      printLayerTree(version.layers, "", 0);
+      if (version.layers.length > 0) {
+        console.log("\n=== 레이어 상세 ===");
+        printLayerTree(version.layers, "", 0);
+      }
+      printAssets(version.assets);
+      printLinks(version.links);
+    } catch (error: unknown) {
+      if (isApiError(error)) {
+        console.error(getApiErrorMessage(error.response.status));
+      } else if (error instanceof Error) {
+        console.error(`오류가 발생했습니다: ${error.message}`);
+      } else {
+        console.error("알 수 없는 오류가 발생했습니다.");
+      }
+      process.exit(1);
     }
-    printAssets(version.assets);
-    printLinks(version.links);
-  } catch (error: unknown) {
-    if (isApiError(error)) {
-      console.error(getApiErrorMessage(error.response.status));
-    } else if (error instanceof Error) {
-      console.error(`오류가 발생했습니다: ${error.message}`);
-    } else {
-      console.error("알 수 없는 오류가 발생했습니다.");
-    }
-    process.exit(1);
-  }
-}
+  },
+};
+
+export { screenGetCommand };
