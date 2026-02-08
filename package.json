@@ -2,8 +2,11 @@
   "name": "zeplin-cli",
   "version": "1.0.0",
   "type": "module",
+  "bin": {
+    "zeplin-cli": "src/main.ts"
+  },
   "scripts": {
-    "start": "node --env-file=.env src/main.ts",
+    "start": "node src/main.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
