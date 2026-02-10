@@ -8,6 +8,7 @@ interface ClassifiedAsset {
   fileName: string;
   format: AssetFormat;
   isIcon: boolean;
+  density: number | undefined;
   content: AssetContent;
 }
 
@@ -113,6 +114,7 @@ export async function classifyAndSelectAssets(
           fileName,
           format: "svg",
           isIcon: true,
+          density: chosen.density,
           content: chosen,
         });
         continue;
@@ -124,6 +126,7 @@ export async function classifyAndSelectAssets(
           fileName,
           format: "svg",
           isIcon: true,
+          density: svgContent.density,
           content: svgContent,
         });
         continue;
@@ -142,6 +145,7 @@ export async function classifyAndSelectAssets(
           fileName,
           format: "png",
           isIcon: true,
+          density: chosen.density,
           content: chosen,
         });
         continue;
@@ -153,6 +157,7 @@ export async function classifyAndSelectAssets(
           fileName,
           format: "png",
           isIcon: true,
+          density: pngContent.density,
           content: pngContent,
         });
       }
@@ -169,6 +174,7 @@ export async function classifyAndSelectAssets(
           fileName,
           format: "png",
           isIcon: false,
+          density: chosen.density,
           content: chosen,
         });
         continue;
@@ -180,6 +186,7 @@ export async function classifyAndSelectAssets(
           fileName,
           format: "png",
           isIcon: false,
+          density: pngContent.density,
           content: pngContent,
         });
       }

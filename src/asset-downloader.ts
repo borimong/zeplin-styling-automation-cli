@@ -21,15 +21,30 @@ async function downloadBuffer(url: string): Promise<Buffer> {
   return Buffer.from(arrayBuffer);
 }
 
+function getDensitySuffix(density: number | undefined): string {
+  if (density === undefined) {
+    return "";
+  }
+  return `@${String(density)}x`;
+}
+
+function formatDensityLabel(density: number | undefined): string {
+  if (density === undefined) {
+    return "";
+  }
+  return ` (@${String(density)}x)`;
+}
+
 function getOutputFileName(asset: ClassifiedAsset): string {
+  const suffix = getDensitySuffix(asset.density);
+
   if (asset.format === "svg") {
-    return `${asset.fileName}.svg`;
+    return `${asset.fileName}${suffix}.svg`;
   }
-  // 아이콘 PNG fallback은 PNG 유지, 이미지는 WebP 변환
   if (asset.isIcon) {
-    return `${asset.fileName}.png`;
+    return `${asset.fileName}${suffix}.png`;
   }
-  return `${asset.fileName}.webp`;
+  return `${asset.fileName}${suffix}.webp`;
 }
 
 async function processAsset(
@@ -37,25 +52,19 @@ async function processAsset(
   outputDir: string,
 ): Promise<{ fileName: string; filePath: string }> {
   const buffer = await downloadBuffer(asset.content.url);
+  const outputFileName = getOutputFileName(asset);
+  const filePath = join(outputDir, outputFileName);
 
   if (asset.format === "svg") {
-    const outputFileName = `${asset.fileName}.svg`;
-    const filePath = join(outputDir, outputFileName);
     await writeFile(filePath, buffer);
     return { fileName: outputFileName, filePath };
   }
 
-  // 아이콘 PNG fallback: WebP 변환 없이 PNG 유지
   if (asset.isIcon) {
-    const outputFileName = `${asset.fileName}.png`;
-    const filePath = join(outputDir, outputFileName);
     await writeFile(filePath, buffer);
     return { fileName: outputFileName, filePath };
   }
 
-  // 이미지: PNG → WebP 변환
-  const outputFileName = `${asset.fileName}.webp`;
-  const filePath = join(outputDir, outputFileName);
   const webpBuffer = await sharp(buffer).webp({ quality: 80 }).toBuffer();
   await writeFile(filePath, webpBuffer);
   return { fileName: outputFileName, filePath };
@@ -76,7 +85,8 @@ export async function downloadAllAssets(
     try {
       const downloaded = await processAsset(asset, outputDir);
       result.success.push(downloaded);
-      console.log(`  ✓ ${downloaded.fileName}`);
+      const densityLabel = formatDensityLabel(asset.density);
+      console.log(`  ✓ ${downloaded.fileName}${densityLabel}`);
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : "알 수 없는 오류";
