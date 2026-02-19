@@ -116,28 +116,6 @@ node src/main.ts screen get https://app.zeplin.io/project/{projectId}/screen/{sc
 
 ---
 
-### `screen list`
-
-프로젝트에 포함된 스크린 목록을 JSON 형태로 조회합니다.
-
-```bash
-node src/main.ts screen list -p <projectId> [--limit <number>] [--offset <number>]
-```
-
-| 옵션 | 축약 | 필수 | 설명 |
-| --- | --- | --- | --- |
-| `--projectId` | `-p` | O | Zeplin 프로젝트 ID |
-| `--limit` | `-l` | X | 조회할 최대 개수 |
-| `--offset` | | X | 페이지네이션 오프셋 |
-
-**예시:**
-
-```bash
-node src/main.ts screen list -p 697ff1797274167fe6435114 --limit 10
-```
-
----
-
 ### `screen download`
 
 스크린에 포함된 에셋을 다운로드합니다. 아이콘/이미지를 자동 분류하고, 밀도(density) 선택 및 WebP 변환을 지원합니다.
@@ -155,34 +133,6 @@ node src/main.ts screen download <zeplin-screen-url> [-o <output-dir>]
 ```bash
 node src/main.ts screen download https://app.zeplin.io/project/{projectId}/screen/{screenId} -o ./my-assets
 ```
-
----
-
-### `screen getSectionByAnnotation`
-
-어노테이션 텍스트를 검색하여 해당 위치의 루트 레이어(섹션)를 찾습니다.
-
-```bash
-node src/main.ts screen getSectionByAnnotation <zeplin-screen-url> <search-text>
-```
-
-**예시:**
-
-```bash
-node src/main.ts screen getSectionByAnnotation https://app.zeplin.io/project/{projectId}/screen/{screenId} "헤더"
-```
-
----
-
-### `screen clip`
-
-스크린의 depth-1 레이어 섹션 목록을 표시하고, 선택한 섹션의 레이어 정보를 클립보드에 복사합니다. (macOS 전용)
-
-```bash
-node src/main.ts screen clip <zeplin-screen-url>
-```
-
-실행하면 대화형 프롬프트가 나타나며, 번호를 입력하여 원하는 섹션을 클립보드에 복사할 수 있습니다. `0`을 입력하면 종료됩니다.
 
 ---
 
