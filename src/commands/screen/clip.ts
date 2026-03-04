@@ -2,14 +2,14 @@ import type { Layer, ScreenVersion } from "@zeplin/sdk";
 import type { CommandModule, ArgumentsCamelCase } from "yargs";
 import { createInterface } from "readline";
 import { execSync } from "child_process";
-import { zeplinClient } from "../../zeplin.ts";
-import { parseZeplinScreenUrl } from "../../parse-url.ts";
-import { isApiError, getApiErrorMessage } from "../../api-error.ts";
+import { zeplinClient } from "#lib/zeplin";
+import { parseZeplinScreenUrl } from "#lib/parse-url";
+import { isApiError, getApiErrorMessage } from "#lib/api-error";
 import {
   printLayerDetail,
   printLayerTree,
   type OutputWriter,
-} from "../../formatters/layer.ts";
+} from "#formatters/layer";
 
 type ScreenClipArgs = {
   url: string;

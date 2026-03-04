@@ -13,7 +13,12 @@ npm install
 
 ### Node.js 요구사항
 
-- Node.js v22 이상 (`.env` 자동 로딩을 위한 `process.loadEnvFile` 사용)
+- Node.js v22 이상 (네이티브 TypeScript 실행 및 `process.loadEnvFile` 사용)
+
+```bash
+# nvm 사용 시 프로젝트 디렉터리에서 아래 명령어로 Node.js 버전을 맞출 수 있습니다
+nvm use
+```
 
 ## 환경 설정
 
@@ -35,59 +40,6 @@ node src/main.ts <command> [options]
 
 ---
 
-## ⚡ Zeplin 스크린 기반 스타일 비교 워크플로우
-
-> **Claude Code와 함께 사용할 때 반드시 이 워크플로우를 따를 것.**
-
-구현한 코드가 Zeplin 디자인 스펙과 스타일링적으로 일치하는지 비교하고, 차이점을 수정하는 워크플로우입니다.
-
-### 실행 방법
-
-**1단계: Zeplin 스크린 정보 조회**
-
-```bash
-node /Users/nudge_0079/zeplin-cli/src/main.ts screen get <zeplin-screen-url>
-```
-
-이 명령어를 실행하면 해당 스크린의 모든 디자인 정보(레이어 트리, 스타일, 간격, 폰트 등)를 조회할 수 있습니다.
-
-**2단계: 구현 코드와 스타일 차이 분석**
-
-조회한 스크린 정보를 기반으로, 현재 구현된 코드와 **스타일링적으로 다른 부분을 모두** 찾습니다.
-
-비교 대상 항목:
-- 노드 간 모든 간격 (gap, margin, padding)
-- 컬러 (배경색, 텍스트 색상, 보더 색상 등)
-- 폰트 (font-family, font-size, font-weight, line-height, letter-spacing)
-- 크기 (width, height)
-- 기타 스타일 속성 (border-radius, opacity, box-shadow 등)
-
-**특히 노드 간 간격이 다른 부분을 빠짐없이 모두 찾아야 합니다.**
-
-**3단계: 차이점을 표 형식으로 정리**
-
-발견된 모든 차이점을 아래와 같은 표 형식으로 보여줍니다:
-
-| # | 대상 요소 | 속성 | 현재 값 | Zeplin 스펙 값 | 비고 |
-|---|----------|------|--------|---------------|------|
-| 1 | `.header` | `padding` | `16px` | `20px` | 상하 패딩 |
-| 2 | `.title` | `font-size` | `14px` | `16px` | |
-| ... | ... | ... | ... | ... | ... |
-
-**4단계: 수정 사항 선택**
-
-`AskUserQuestion` 도구를 사용하여 각 수정 사항을 반영할지 여부를 사용자에게 물어봅니다. 사용자가 선택한 항목만 코드에 반영합니다.
-
-### 사용 예시
-
-```
-Zeplin 스크린 URL: https://app.zeplin.io/project/697ff1797274167fe6435114/screen/69894baa1749382c2f649774
-
-위 스크린과 현재 구현된 코드의 스타일 차이를 비교해줘.
-```
-
----
-
 ## 명령어
 
 ### `screen get`
@@ -104,15 +56,27 @@ node src/main.ts screen get <zeplin-screen-url>
 node src/main.ts screen get https://app.zeplin.io/project/{projectId}/screen/{screenId}
 ```
 
-**동작 확인:**
+---
 
-출력 결과를 파일로 리다이렉트하면 명령어의 동작 여부를 확인할 수 있습니다.
+### `screen list`
+
+프로젝트의 스크린 목록을 조회합니다.
 
 ```bash
-node src/main.ts screen get https://app.zeplin.io/project/{projectId}/screen/{screenId} > output.txt
+node src/main.ts screen list --projectId <project-id> [--limit <n>] [--offset <n>]
 ```
 
-`output.txt` 파일을 열어 스크린 정보가 정상적으로 출력되었는지 확인하세요.
+| 옵션 | 축약 | 필수 | 기본값 | 설명 |
+| --- | --- | --- | --- | --- |
+| `--projectId` | `-p` | O | - | 프로젝트 ID |
+| `--limit` | `-l` | - | - | 조회할 최대 개수 |
+| `--offset` | - | - | - | 페이지네이션 오프셋 |
+
+**예시:**
+
+```bash
+node src/main.ts screen list -p 697ff1797274167fe6435114 --limit 10
+```
 
 ---
 
@@ -136,6 +100,63 @@ node src/main.ts screen download https://app.zeplin.io/project/{projectId}/scree
 
 ---
 
+### `screen spec`
+
+Zeplin 스크린을 컴팩트 CSS 스펙으로 출력합니다. 레이어 트리를 ASCII 형식으로 표시하며, 각 레이어의 CSS 속성을 인라인으로 보여줍니다.
+
+```bash
+node src/main.ts screen spec <zeplin-screen-url> [--depth <n>] [--section <name>]
+```
+
+| 옵션 | 기본값 | 설명 |
+| --- | --- | --- |
+| `--depth` | `3` | 출력할 레이어 트리 깊이 |
+| `--section` | - | 특정 레이어만 출력 (이름 부분 매칭) |
+
+**예시:**
+
+```bash
+# 전체 스펙 출력
+node src/main.ts screen spec https://app.zeplin.io/project/{projectId}/screen/{screenId}
+
+# 깊이 제한 및 섹션 필터링
+node src/main.ts screen spec https://app.zeplin.io/project/{projectId}/screen/{screenId} --depth 5 --section Header
+```
+
+---
+
+### `screen clip`
+
+스크린의 depth-1(최상위) 섹션 목록을 보여주고, 선택한 섹션의 레이어 트리를 클립보드에 복사합니다.
+
+```bash
+node src/main.ts screen clip <zeplin-screen-url>
+```
+
+**동작 방식:**
+
+1. 스크린의 최상위 섹션 목록을 표시
+2. 번호를 입력하면 해당 섹션의 레이어 트리를 클립보드에 복사
+3. `0`을 입력하면 종료
+
+---
+
+### `screen getSectionByAnnotation`
+
+어노테이션 텍스트로 해당 섹션(루트 레이어)을 찾습니다. 대소문자를 구분하지 않고 부분 매칭합니다.
+
+```bash
+node src/main.ts screen getSectionByAnnotation <zeplin-screen-url> <text>
+```
+
+**예시:**
+
+```bash
+node src/main.ts screen getSectionByAnnotation https://app.zeplin.io/project/{projectId}/screen/{screenId} "헤더"
+```
+
+---
+
 ## Zeplin URL 형식
 
 모든 스크린 관련 명령어는 아래 형식의 Zeplin URL을 사용합니다.
@@ -145,3 +166,9 @@ https://app.zeplin.io/project/{projectId}/screen/{screenId}
 ```
 
 브라우저에서 Zeplin 스크린을 열면 주소창에서 해당 URL을 확인할 수 있습니다.
+
+---
+
+## 참고 문서
+
+- [Zeplin Layer/Node API 조회 가이드](docs/layer-api.md) — Zeplin API의 레이어 조회 방식 및 Layer 모델 구조 설명
