@@ -13,7 +13,12 @@ npm install
 
 ### Node.js 요구사항
 
-- Node.js v22 이상 (`.env` 자동 로딩을 위한 `process.loadEnvFile` 사용)
+- Node.js v22 이상 (네이티브 TypeScript 실행 및 `process.loadEnvFile` 사용)
+
+```bash
+# nvm 사용 시 프로젝트 디렉터리에서 아래 명령어로 Node.js 버전을 맞출 수 있습니다
+nvm use
+```
 
 ## 환경 설정
 
