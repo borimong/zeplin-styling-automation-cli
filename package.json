@@ -19,6 +19,10 @@
     "typescript": "^5.9.3",
     "yargs": "^18.0.0"
   },
+  "imports": {
+    "#lib/*": "./src/lib/*.ts",
+    "#formatters/*": "./src/formatters/*.ts"
+  },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@types/node": "^25.2.1",

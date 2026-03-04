@@ -1,8 +1,8 @@
 import type { Layer, Screen, ScreenVersion } from "@zeplin/sdk";
 import type { Argv, CommandModule, ArgumentsCamelCase } from "yargs";
-import { zeplinClient } from "../../lib/zeplin.ts";
-import { parseZeplinScreenUrl } from "../../lib/parse-url.ts";
-import { isApiError, getApiErrorMessage } from "../../lib/api-error.ts";
+import { zeplinClient } from "#lib/zeplin";
+import { parseZeplinScreenUrl } from "#lib/parse-url";
+import { isApiError, getApiErrorMessage } from "#lib/api-error";
 import {
   formatCssColor,
   formatCssFill,
@@ -10,7 +10,7 @@ import {
   formatCssBoxShadow,
   inferLayout,
   formatPaddingShorthand,
-} from "../../formatters/layer.ts";
+} from "#formatters/layer";
 
 type ScreenSpecArgs = {
   url: string;

@@ -1,14 +1,14 @@
 import type { Screen, ScreenVersion } from "@zeplin/sdk";
 import type { CommandModule, ArgumentsCamelCase } from "yargs";
-import { zeplinClient } from "../../lib/zeplin.ts";
-import { parseZeplinScreenUrl } from "../../lib/parse-url.ts";
-import { isApiError, getApiErrorMessage } from "../../lib/api-error.ts";
+import { zeplinClient } from "#lib/zeplin";
+import { parseZeplinScreenUrl } from "#lib/parse-url";
+import { isApiError, getApiErrorMessage } from "#lib/api-error";
 import {
   formatColor,
   printAssets,
   printLayerTree,
   printLinks,
-} from "../../formatters/layer.ts";
+} from "#formatters/layer";
 
 type ScreenGetArgs = {
   url: string;
