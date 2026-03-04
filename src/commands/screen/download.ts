@@ -1,10 +1,10 @@
 import type { CommandModule, ArgumentsCamelCase } from "yargs";
 import { resolve } from "node:path";
-import { zeplinClient } from "../../zeplin.ts";
-import { parseZeplinScreenUrl } from "../../parse-url.ts";
-import { isApiError, getApiErrorMessage } from "../../api-error.ts";
-import { classifyAndSelectAssets } from "../../asset-classifier.ts";
-import { downloadAllAssets } from "../../asset-downloader.ts";
+import { zeplinClient } from "../../lib/zeplin.ts";
+import { parseZeplinScreenUrl } from "../../lib/parse-url.ts";
+import { isApiError, getApiErrorMessage } from "../../lib/api-error.ts";
+import { classifyAndSelectAssets } from "../../lib/asset-classifier.ts";
+import { downloadAllAssets } from "../../lib/asset-downloader.ts";
 
 type ScreenDownloadArgs = {
   url: string;

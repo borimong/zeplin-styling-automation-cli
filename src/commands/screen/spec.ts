@@ -1,8 +1,8 @@
 import type { Layer, Screen, ScreenVersion } from "@zeplin/sdk";
 import type { Argv, CommandModule, ArgumentsCamelCase } from "yargs";
-import { zeplinClient } from "../../zeplin.ts";
-import { parseZeplinScreenUrl } from "../../parse-url.ts";
-import { isApiError, getApiErrorMessage } from "../../api-error.ts";
+import { zeplinClient } from "../../lib/zeplin.ts";
+import { parseZeplinScreenUrl } from "../../lib/parse-url.ts";
+import { isApiError, getApiErrorMessage } from "../../lib/api-error.ts";
 import {
   formatCssColor,
   formatCssFill,

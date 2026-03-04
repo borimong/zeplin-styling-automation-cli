@@ -1,5 +1,5 @@
 import type { CommandModule, ArgumentsCamelCase } from "yargs";
-import { zeplinClient } from "../../zeplin.ts";
+import { zeplinClient } from "../../lib/zeplin.ts";
 
 type ScreenListArgs = {
   projectId: string;
