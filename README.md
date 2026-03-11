@@ -100,60 +100,16 @@ node src/main.ts screen download https://app.zeplin.io/project/{projectId}/scree
 
 ---
 
-### `screen spec`
+## Experimental (실험적 기능)
 
-Zeplin 스크린을 컴팩트 CSS 스펙으로 출력합니다. 레이어 트리를 ASCII 형식으로 표시하며, 각 레이어의 CSS 속성을 인라인으로 보여줍니다.
+아래 명령어들은 현재 개발 중이며 정식 릴리즈되지 않은 실험적 기능입니다.
+코드는 `src/commands/screen/experimental/` 디렉터리에 보존되어 있으며, 기능이 완성되면 정식 명령어로 등록될 예정입니다.
 
-```bash
-node src/main.ts screen spec <zeplin-screen-url> [--depth <n>] [--section <name>]
-```
-
-| 옵션 | 기본값 | 설명 |
+| 명령어 | 파일 | 설명 |
 | --- | --- | --- |
-| `--depth` | `3` | 출력할 레이어 트리 깊이 |
-| `--section` | - | 특정 레이어만 출력 (이름 부분 매칭) |
-
-**예시:**
-
-```bash
-# 전체 스펙 출력
-node src/main.ts screen spec https://app.zeplin.io/project/{projectId}/screen/{screenId}
-
-# 깊이 제한 및 섹션 필터링
-node src/main.ts screen spec https://app.zeplin.io/project/{projectId}/screen/{screenId} --depth 5 --section Header
-```
-
----
-
-### `screen clip`
-
-스크린의 depth-1(최상위) 섹션 목록을 보여주고, 선택한 섹션의 레이어 트리를 클립보드에 복사합니다.
-
-```bash
-node src/main.ts screen clip <zeplin-screen-url>
-```
-
-**동작 방식:**
-
-1. 스크린의 최상위 섹션 목록을 표시
-2. 번호를 입력하면 해당 섹션의 레이어 트리를 클립보드에 복사
-3. `0`을 입력하면 종료
-
----
-
-### `screen getSectionByAnnotation`
-
-어노테이션 텍스트로 해당 섹션(루트 레이어)을 찾습니다. 대소문자를 구분하지 않고 부분 매칭합니다.
-
-```bash
-node src/main.ts screen getSectionByAnnotation <zeplin-screen-url> <text>
-```
-
-**예시:**
-
-```bash
-node src/main.ts screen getSectionByAnnotation https://app.zeplin.io/project/{projectId}/screen/{screenId} "헤더"
-```
+| `screen spec` | `experimental/spec.ts` | 스크린을 컴팩트 CSS 스펙으로 출력 |
+| `screen clip` | `experimental/clip.ts` | 레이어 섹션을 클립보드에 복사 |
+| `screen getSectionByAnnotation` | `experimental/getSectionByAnnotation.ts` | 어노테이션 텍스트로 섹션 검색 |
 
 ---
 
